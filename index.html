@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 20%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 10%;
+  border-radius: 12px;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+img.avatar {
+  width: 10%;
+  border-radius: 50%;
+}
+
+.container {
+  padding: 10px;
+  text-align: center;
+}
+
+.uname {
+    font-size: 40px;
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+  span.psw {
+     display: block;
+     float: none;
+  }
+  .cancelbtn {
+     width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+    <div class="imgcontainer">
+        <img src="elastic-logo.svg" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+      <label class="uname" for="uname"><b>Numero da Sorte!</b></label>
+    </div>
+    <div class="container">
+      <input type="text" placeholder="Digite seu numero da sorte" id="uname" name="uname" required autofocus>
+    </div>
+    
+    <div class="container">
+        <button onclick="validar()">Login</button>
+    </div>
+
+
+<script>
+// Defining async function
+async function getapi(url,number) {
+    
+    // Storing response
+    const response = await fetch(url, { 
+        method: 'GET', 
+        headers: new Headers({
+            'Authorization': 'ApiKey ENCODED_DA_API_KEY==', 
+            'Content-Type': 'application/json'
+        }),
+    });
+
+    // Storing data in form of JSON
+    var data = await response.json();
+    data = data['hits']['hits'][0]['_source']['numero'];
+
+    var date=new Date();
+    var day=date.getDate();
+    var month=date.getMonth()+1;
+    var year=date.getFullYear();
+    var h=date.getHours();
+    var m=date.getMinutes();
+    var s=date.getSeconds();
+    var full_date = day+"/"+month+"/"+year+" "+h+":"+m+":"+s
+    
+    if(data.toString() == number.toString()){
+        alert(full_date + " | Parabéns!!! Você acertou o numero " + number.toString() + "!!!!");
+    } else if(number.toString() == "") {
+        alert(full_date + " - Opss... DIGITE UM NÚMERO!");
+    } else if(data.toString() > number.toString()) {
+        alert(full_date + " - Opss...  É um número maior que " + number.toString() + "!");
+    } else if(data.toString() < number.toString()) {
+        alert(full_date + " - Opss... É um número menor que " + number.toString() + "!");
+    }
+}
+  
+// Function to hide the loader
+function hideloader() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+function validar() {
+    var number = document.getElementById('uname').value;
+    // api url
+    const api_url = "http://ENPOINT_ELASTICSEARCH/numero_sorte/_search";
+    //alert(number);
+    getapi(api_url, number);
+}
+</script>
+
+</body>
+</html>
